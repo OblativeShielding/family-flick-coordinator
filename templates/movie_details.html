@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Night Assistant - Movie Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page-wrapper">
+        <header class="top-bar">
+            <h1>Movie Night Assistant</h1>
+        </header>
+
+        <main class="main-content movie-main">
+            <section class="movie-details-section">
+                <h2>Movie Details: {{ movie.title }}</h2>
+
+                <div class="movie-card">
+                    {% if movie.image_url %}
+                    <img class="details-image" src="{{ movie.image_url }}" alt="{{ movie.title }} poster">
+                    {% else %}
+                    <div class="details-image movie-thumb-placeholder">No Image</div>
+                    {% endif %}
+                    <p><strong>Genre:</strong> {{ movie.genre }}</p>
+                    <p><strong>Run time:</strong> {{ movie.run_time }}m</p>
+                    <p><strong>Description:</strong> {{ movie.description }}</p>
+                    <p>
+                        <strong>Interest:</strong>
+                        <span class="stars-display">
+                            {% for star in range(1, 6) %}
+                                {% if star <= movie.interest %}&#9733;{% else %}&#9734;{% endif %}
+                            {% endfor %}
+                        </span>
+                    </p>
+                </div>
+
+                <div class="details-actions">
+                    <form action="{{ url_for('remove_movie', movie_id=movie.id) }}" method="post">
+                        <button type="submit">Remove Movie</button>
+                    </form>
+                    <a class="back-link" href="{{ url_for('movie_list') }}">Back to Movie List</a>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Night Assistant - Movie List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page-wrapper">
+        <header class="top-bar">
+            <h1>Movie Night Assistant</h1>
+        </header>
+
+        <main class="main-content movie-main">
+            <section class="movie-list-section">
+                <div class="movie-list-header">
+                    <h2>Movie List</h2>
+                    <button type="button" id="open-add-modal">Add Movie</button>
+                </div>
+
+                <table class="movie-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Image</th>
+                            <th>Run Time</th>
+                            <th>Genre</th>
+                            <th>Interest</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for movie in movies %}
+                        <tr>
+                            <td>
+                                <a class="movie-link" href="{{ url_for('movie_details', movie_id=movie.id) }}">
+                                    {{ movie.title }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if movie.image_url %}
+                                <img class="movie-thumb" src="{{ movie.image_url }}" alt="{{ movie.title }} poster">
+                                {% else %}
+                                <div class="movie-thumb movie-thumb-placeholder">No Image</div>
+                                {% endif %}
+                            </td>
+                            <td>{{ movie.run_time }}m</td>
+                            <td>{{ movie.genre }}</td>
+                            <td>
+                                <span class="stars-display">
+                                    {% for star in range(1, 6) %}
+                                        {% if star <= movie.interest %}&#9733;{% else %}&#9734;{% endif %}
+                                    {% endfor %}
+                                </span>
+                            </td>
+                            <td class="row-actions">
+                                <button
+                                    type="button"
+                                    class="row-action-button edit-movie-button"
+                                    data-id="{{ movie.id }}"
+                                    data-title="{{ movie.title }}"
+                                    data-run-time="{{ movie.run_time }}"
+                                    data-genre="{{ movie.genre }}"
+                                    data-image-url="{{ movie.image_url }}"
+                                    data-interest="{{ movie.interest }}"
+                                >
+                                    Edit
+                                </button>
+                                <form action="{{ url_for('remove_movie', movie_id=movie.id) }}" method="post">
+                                    <button class="row-action-button delete-button" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <div id="movie-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <h3 id="modal-title">Add Movie</h3>
+            <form id="movie-form" action="{{ url_for('add_movie') }}" method="post">
+                <label for="movie-title">Title</label>
+                <input id="movie-title" type="text" name="title" required>
+
+                <label for="movie-runtime">Runtime (minutes)</label>
+                <input id="movie-runtime" type="number" name="run_time" min="1" required>
+
+                <label for="movie-genre">Genre</label>
+                <input id="movie-genre" type="text" name="genre" required>
+
+                <label for="movie-image-url">Image URL (optional)</label>
+                <input id="movie-image-url" type="url" name="image_url" placeholder="https://...">
+
+                <label for="movie-interest">Rating (1-5)</label>
+                <select id="movie-interest" name="interest">
+                    {% for rating in range(1, 6) %}
+                    <option value="{{ rating }}">{{ rating }}</option>
+                    {% endfor %}
+                </select>
+
+                <div class="form-actions">
+                    <button id="save-movie-button" type="submit">Add Movie</button>
+                    <button type="button" id="cancel-modal-button" class="secondary-button">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById("movie-modal");
+        const openAddModalButton = document.getElementById("open-add-modal");
+        const cancelModalButton = document.getElementById("cancel-modal-button");
+        const modalTitle = document.getElementById("modal-title");
+        const movieForm = document.getElementById("movie-form");
+        const saveMovieButton = document.getElementById("save-movie-button");
+        const titleInput = document.getElementById("movie-title");
+        const runtimeInput = document.getElementById("movie-runtime");
+        const genreInput = document.getElementById("movie-genre");
+        const imageUrlInput = document.getElementById("movie-image-url");
+        const interestInput = document.getElementById("movie-interest");
+        const editButtons = document.querySelectorAll(".edit-movie-button");
+
+        function openModal() {
+            modal.classList.remove("hidden");
+        }
+
+        function closeModal() {
+            modal.classList.add("hidden");
+        }
+
+        function configureAddMode() {
+            modalTitle.textContent = "Add Movie";
+            movieForm.action = "{{ url_for('add_movie') }}";
+            saveMovieButton.textContent = "Add Movie";
+            titleInput.value = "";
+            runtimeInput.value = "";
+            genreInput.value = "";
+            imageUrlInput.value = "";
+            interestInput.value = "1";
+        }
+
+        function configureEditMode(button) {
+            const movieId = button.dataset.id;
+            modalTitle.textContent = "Edit Movie";
+            movieForm.action = `/movies/${movieId}/edit`;
+            saveMovieButton.textContent = "Save Changes";
+            titleInput.value = button.dataset.title || "";
+            runtimeInput.value = button.dataset.runTime || "";
+            genreInput.value = button.dataset.genre || "";
+            imageUrlInput.value = button.dataset.imageUrl || "";
+            interestInput.value = button.dataset.interest || "1";
+        }
+
+        openAddModalButton.addEventListener("click", () => {
+            configureAddMode();
+            openModal();
+        });
+
+        cancelModalButton.addEventListener("click", closeModal);
+
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        editButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                configureEditMode(button);
+                openModal();
+            });
+        });
+    </script>
+</body>
+</html>

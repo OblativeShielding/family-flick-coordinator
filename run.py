@@ -4,7 +4,7 @@
 
 # library imports
 from dotenv import load_dotenv
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
 from sqlalchemy import text
@@ -49,6 +49,19 @@ app.config["SQLALCHEMY_DATABASE_URI"] = url
 
 db = SQLAlchemy(app)
 
+# Temporary in-memory data for UI testing.
+MOVIES = {
+    1: {
+        "id": 1,
+        "title": "Minecraft Movie",
+        "run_time": 101,
+        "genre": "Adventure/Comedy",
+        "description": "A simple placeholder description for the first movie option.",
+        "interest": 3,
+        "image_url": "",
+    }
+}
+
 @app.route("/")
 def home():
     return render_template("login.html")
@@ -60,6 +73,80 @@ def login():
 @app.route("/register")
 def register():
     return render_template("register.html")
+
+
+@app.route("/movies")
+def movie_list():
+    return render_template("movie_list.html", movies=list(MOVIES.values()))
+
+
+@app.route("/movies/<int:movie_id>")
+def movie_details(movie_id):
+    movie = MOVIES.get(movie_id)
+    if movie is None:
+        return "Movie not found", 404
+    return render_template("movie_details.html", movie=movie)
+
+
+@app.route("/movies/add", methods=["POST"])
+def add_movie():
+    title = (request.form.get("title") or "").strip()
+    run_time = request.form.get("run_time", type=int)
+    genre = (request.form.get("genre") or "").strip()
+    image_url = (request.form.get("image_url") or "").strip()
+    rating = request.form.get("interest", type=int)
+
+    if not title:
+        title = "Untitled Movie"
+    if not run_time or run_time < 1:
+        run_time = 100
+    if not genre:
+        genre = "Genre"
+    if not rating:
+        rating = 1
+
+    next_id = (max(MOVIES.keys()) + 1) if MOVIES else 1
+    MOVIES[next_id] = {
+        "id": next_id,
+        "title": title,
+        "run_time": run_time,
+        "genre": genre,
+        "description": "Simple placeholder description.",
+        "interest": max(1, min(5, rating)),
+        "image_url": image_url,
+    }
+    return redirect(url_for("movie_list"))
+
+
+@app.route("/movies/<int:movie_id>/edit", methods=["POST"])
+def edit_movie(movie_id):
+    movie = MOVIES.get(movie_id)
+    if movie is None:
+        return "Movie not found", 404
+
+    title = (request.form.get("title") or "").strip()
+    run_time = request.form.get("run_time", type=int)
+    genre = (request.form.get("genre") or "").strip()
+    image_url = (request.form.get("image_url") or "").strip()
+    rating = request.form.get("interest", type=int)
+
+    if title:
+        movie["title"] = title
+    if run_time and run_time > 0:
+        movie["run_time"] = run_time
+    if genre:
+        movie["genre"] = genre
+    movie["image_url"] = image_url
+    if rating:
+        movie["interest"] = max(1, min(5, rating))
+
+    return redirect(url_for("movie_list"))
+
+
+@app.route("/movies/<int:movie_id>/remove", methods=["POST"])
+def remove_movie(movie_id):
+    MOVIES.pop(movie_id, None)
+    return redirect(url_for("movie_list"))
 '''
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
