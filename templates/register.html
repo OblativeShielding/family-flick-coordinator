@@ -1,39 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Night Assistant</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Register</title>
 </head>
 <body>
-    <div class="page-wrapper">
-        <header class="top-bar">
-            <h1>Movie Night Assistant</h1>
-        </header>
+<h1>Register</h1>
 
-        <main class="main-content">
-            <section class="login-section">
-                <h2>Log In</h2>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
 
-                <form class="login-form">
-                    <div class="form-row">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username">
-                    </div>
+<form method="POST" action="/register">
+    <label>Username:</label><br>
+    <input type="text" name="username" required><br><br>
 
-                    <div class="form-row">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password">
-                    </div>
+    <label>Email:</label><br>
+    <input type="email" name="email" required><br><br>
 
-                    <p class="register-text">
-                        Already have an account?
-                        <a href="/login">Log in Here</a>
-                    </p>
-                </form>
-            </section>
-        </main>
-    </div>
+    <label>Password:</label><br>
+    <input type="password" name="password" required><br><br>
+
+    <label>Confirm Password:</label><br>
+    <input type="password" name="confirm_password" required><br><br>
+
+    <button type="submit">Register</button>
+</form>
+
+<p>Already have an account? <a href="/login">Log in</a></p>
 </body>
 </html>
