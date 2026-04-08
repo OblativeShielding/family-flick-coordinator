@@ -2,30 +2,53 @@
 <html>
 <head>
     <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<h1>Login</h1>
+    <div class="page-wrapper">
 
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
+        <div class="top-bar">
+            <h1>Movie Night Assistant</h1>
+        </div>
 
-<form method="POST" action="/login">
-    <label>Email:</label><br>
-    <input type="email" name="email" required><br><br>
+        <div class="main-content">
+            <div class="login-section">
 
-    <label>Password:</label><br>
-    <input type="password" name="password" required><br><br>
+                <h2>Login</h2>
 
-    <button type="submit">Login</button>
-</form>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
 
-<p>Need an account? <a href="/register">Register</a></p>
+                <form method="POST" action="/login" class="login-form">
+
+                    <div class="form-row">
+                        <label>Email:</label>
+                        <input type="email" name="email" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Password:</label>
+                        <input type="password" name="password" required>
+                    </div>
+
+                    <button type="submit">Login</button>
+
+                    <div class="register-text">
+                        Need an account? <a href="/register">Register</a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
 </body>
 </html>
