@@ -100,3 +100,174 @@ body {
     font-weight: 600;
 }
 
+.movie-main {
+    padding: 40px;
+    justify-content: center;
+}
+
+.movie-list-section,
+.movie-details-section {
+    width: 900px;
+}
+
+.movie-list-section h2,
+.movie-details-section h2 {
+    margin: 0 0 20px 0;
+    font-size: 32px;
+    font-weight: normal;
+}
+
+.movie-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.form-actions {
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.movie-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #f5f5f5;
+}
+
+.movie-table th,
+.movie-table td {
+    border: 1px solid #666;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.movie-link {
+    color: #1a4f8b;
+    text-decoration: underline;
+}
+
+.movie-thumb {
+    width: 70px;
+    height: 70px;
+    border: 1px solid #666;
+    object-fit: cover;
+}
+
+.movie-thumb-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #444;
+}
+
+.row-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+}
+
+.row-actions form {
+    margin: 0;
+}
+
+button {
+    padding: 6px 12px;
+    border: 1px solid #444;
+    background: #fff;
+    cursor: pointer;
+}
+
+.movie-card {
+    border: 1px solid #666;
+    background: #f5f5f5;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.stars-display {
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+.row-action-button {
+    min-width: 70px;
+    padding: 6px 12px;
+    text-align: center;
+}
+
+.delete-button {
+    border-color: #8a3b3b;
+}
+
+.details-image {
+    width: 110px;
+    height: 110px;
+    margin-bottom: 12px;
+}
+
+.details-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.back-link {
+    margin-left: 12px;
+    color: #1a4f8b;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.hidden {
+    display: none;
+}
+
+.modal-card {
+    width: 420px;
+    max-width: 90%;
+    border: 1px solid #666;
+    background: #f5f5f5;
+    padding: 16px;
+}
+
+.modal-card h3 {
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    font-weight: normal;
+}
+
+#movie-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#movie-form label {
+    font-size: 14px;
+}
+
+#movie-form input,
+#movie-form select {
+    border: 1px solid #666;
+    background: #fff;
+    padding: 8px;
+    font-size: 14px;
+}
+
+.secondary-button {
+    background: #efefef;
+}
