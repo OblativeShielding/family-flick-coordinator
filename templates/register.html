@@ -1,39 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Night Assistant</title>
+    <title>Register</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="page-wrapper">
-        <header class="top-bar">
+
+        <div class="top-bar">
             <h1>Movie Night Assistant</h1>
-        </header>
+        </div>
 
-        <main class="main-content">
-            <section class="login-section">
-                <h2>Log In</h2>
+        <div class="main-content">
+            <div class="login-section">
 
-                <form class="login-form">
+                <h2>Register</h2>
+
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="/register" class="login-form">
+
                     <div class="form-row">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username">
+                        <label>Username:</label>
+                        <input type="text" name="username" required>
                     </div>
 
                     <div class="form-row">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password">
+                        <label>Email:</label>
+                        <input type="email" name="email" required>
                     </div>
 
-                    <p class="register-text">
-                        Already have an account?
-                        <a href="/login">Log in Here</a>
-                    </p>
+                    <div class="form-row">
+                        <label>Password:</label>
+                        <input type="password" name="password" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Confirm Password:</label>
+                        <input type="password" name="confirm_password" required>
+                    </div>
+
+                    <button type="submit">Register</button>
+
+                    <div class="register-text">
+                        Already have an account? <a href="/login">Log in</a>
+                    </div>
+
                 </form>
-            </section>
-        </main>
+
+            </div>
+        </div>
+
     </div>
 </body>
 </html>
