@@ -207,10 +207,6 @@ def remove_movie(movie_id):
     MOVIES.pop(movie_id, None)
     return redirect(url_for("movie_list"))
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
