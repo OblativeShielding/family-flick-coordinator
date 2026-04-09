@@ -233,7 +233,7 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    flash("You have been logged out.")
+    flash("You've been logged out.")
     return redirect(url_for("login"))
 
 if __name__ == "__main__":

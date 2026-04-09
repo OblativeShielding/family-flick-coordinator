@@ -18,7 +18,9 @@ body {
     border-bottom: 2px solid #4a4a4a;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding-left: 18px;
+    padding-right: 18px;
     box-sizing: border-box;
 }
 
@@ -28,6 +30,17 @@ body {
     font-size: 20px;
     font-weight: normal;
     color: #222;
+}
+
+.top-bar-logout {
+    color: #4a90e2;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.top-bar-logout:hover {
+    text-decoration: underline;
 }
 
 
@@ -270,4 +283,53 @@ button {
 
 .secondary-button {
     background: #efefef;
+}
+
+.home-section h2 {
+    margin: 0 0 24px 0;
+}
+
+.home-status {
+    margin: 0 0 8px 0;
+    text-align: center;
+    font-size: 18px;
+    color: #222;
+}
+
+.home-messages {
+    margin: 16px auto 0;
+    padding-left: 20px;
+    max-width: 700px;
+    font-size: 16px;
+}
+
+.home-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    margin-top: 48px;
+}
+
+.nav-link-button {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 1px solid #444;
+    background: #fff;
+    color: #111;
+    text-decoration: none;
+    font-size: 20px;
+    cursor: pointer;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.nav-link-button:hover {
+    background: #f0f0f0;
+}
+
+.home-logout-link {
+    color: #4a90e2;
+    font-weight: 600;
+    font-size: 18px;
 }

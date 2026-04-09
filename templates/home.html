@@ -1,11 +1,40 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Home</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home — Movie Night Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<h1>Welcome{% if user %}, {{ user.username }}{% endif %}!</h1>
-<p>You are logged in.</p>
-<a href="/logout">Logout</a>
+    <div class="page-wrapper">
+
+        <div class="top-bar">
+            <h1>Movie Night Assistant</h1>
+        </div>
+
+        <div class="main-content">
+            <div class="login-section home-section">
+
+                <h2>Welcome{% if user %}, {{ user.username }}{% endif %}!</h2>
+                <p class="home-status">You are logged in.</p>
+
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul class="home-messages">
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+
+                <div class="home-actions">
+                    <a href="{{ url_for('movie_list') }}" class="nav-link-button">Movie list</a>
+                    <a href="{{ url_for('logout') }}" class="home-logout-link">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
