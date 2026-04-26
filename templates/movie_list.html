@@ -82,8 +82,7 @@
                                     data-genre="{{ movie.genre }}"
                                     data-image-url="{{ movie.image_url }}"
                                     data-interest="{{ movie.interest }}"
-                                    data-description="{{ movie.description or '' }}"
-                            >
+                                    data-description="{{ movie.description|default('', true)|e }}"                            >
                                 Edit
                             </button>
 

@@ -52,19 +52,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-change-this")
 db = SQLAlchemy(app)
 
-# Temporary in-memory data for UI testing.
-MOVIES = {
-    1: {
-        "id": 1,
-        "title": "Minecraft Movie",
-        "run_time": 101,
-        "genre": "Adventure/Comedy",
-        "description": "A simple placeholder description for the first movie option.",
-        "interest": 3,
-        "image_url": "",
-    }
-}
-
 # -------------------------
 # User model
 # -------------------------
@@ -75,6 +62,21 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
+    
+# -------------------------
+# Movie model
+# -------------------------
+class Movie(db.Model):
+    __tablename__ = "movies"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    run_time = db.Column(db.Integer, nullable=False)
+    genre = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    interest = db.Column(db.Integer, nullable=False, default=1)
+    image_url = db.Column(db.String(500))
+        
 
 # -------------------------
 # Create tables
@@ -136,20 +138,24 @@ def register():
 
 @app.route("/movies")
 def movie_list():
-    return render_template("movie_list.html", movies=list(MOVIES.values()))
+    # Get all movies from the MySQL movies table
+    movies = Movie.query.all()
+
+    return render_template("movie_list.html", movies=movies)
 
 
 @app.route("/movies/<int:movie_id>")
 def movie_details(movie_id):
-    movie = MOVIES.get(movie_id)
-    if movie is None:
-        return "Movie not found", 404
+    # Find the movie in the MySQL movies table.
+    # If it does not exist, Flask shows a 404 page.
+    movie = Movie.query.get_or_404(movie_id)
+
     return render_template("movie_details.html", movie=movie)
 
 
 @app.route("/movies/add", methods=["POST"])
 def add_movie():
-    # Get form data from movie_list.html modal
+    # Get form data from the Add Movie modal in movie_list.html
     title = (request.form.get("title") or "").strip()
     run_time = request.form.get("run_time", type=int)
     genre = (request.form.get("genre") or "").strip()
@@ -157,7 +163,7 @@ def add_movie():
     description = (request.form.get("description") or "").strip()
     rating = request.form.get("interest", type=int)
 
-    # Basic backup/default values so the app does not break
+    # Set simple default values if something is missing
     if not title:
         title = "Untitled Movie"
 
@@ -170,36 +176,30 @@ def add_movie():
     if not rating:
         rating = 1
 
-    # Create the next movie ID
-    next_id = (max(MOVIES.keys()) + 1) if MOVIES else 1
+    # Create a new Movie object.
+    # This matches the Movie model/table we created above.
+    new_movie = Movie(
+        title=title,
+        run_time=run_time,
+        genre=genre,
+        description=description,
+        interest=max(1, min(5, rating)),
+        image_url=image_url
+    )
 
-    # Save the new movie into the temporary MOVIES dictionary
-    MOVIES[next_id] = {
-        "id": next_id,
-        "title": title,
-        "run_time": run_time,
-        "genre": genre,
-
-        # This is the important fix:
-        # Save the description that came from the form.
-        "description": description,
-
-        "interest": max(1, min(5, rating)),
-        "image_url": image_url,
-    }
+    # Save the new movie to MySQL
+    db.session.add(new_movie)
+    db.session.commit()
 
     return redirect(url_for("movie_list"))
 
 
 @app.route("/movies/<int:movie_id>/edit", methods=["POST"])
 def edit_movie(movie_id):
-    # Find the movie being edited
-    movie = MOVIES.get(movie_id)
+    # Find the movie in the database
+    movie = Movie.query.get_or_404(movie_id)
 
-    if movie is None:
-        return "Movie not found", 404
-
-    # Get updated form data from the edit modal
+    # Get updated form data from the Edit Movie modal
     title = (request.form.get("title") or "").strip()
     run_time = request.form.get("run_time", type=int)
     genre = (request.form.get("genre") or "").strip()
@@ -207,37 +207,39 @@ def edit_movie(movie_id):
     description = (request.form.get("description") or "").strip()
     rating = request.form.get("interest", type=int)
 
-    # Only update title if the user typed something
+    # Update the movie fields
     if title:
-        movie["title"] = title
+        movie.title = title
 
-    # Only update runtime if it is a valid number
     if run_time and run_time > 0:
-        movie["run_time"] = run_time
+        movie.run_time = run_time
 
-    # Only update genre if the user typed something
     if genre:
-        movie["genre"] = genre
+        movie.genre = genre
 
-    # Image URL can be blank, so we always update it
-    movie["image_url"] = image_url
+    # These can be blank, so we update them either way
+    movie.image_url = image_url
+    movie.description = description
 
-    # This is the important fix:
-    # Save the edited description into the movie dictionary.
-    movie["description"] = description
-
-    # Keep interest between 1 and 5 stars
     if rating:
-        movie["interest"] = max(1, min(5, rating))
+        movie.interest = max(1, min(5, rating))
 
-    # Send user to the movie details page after editing
-    # so they can immediately see the updated description.
-    return redirect(url_for("movie_details", movie_id=movie_id))
+    # Save changes to MySQL
+    db.session.commit()
+
+    # Go to the details page so you can immediately see the description
+    return redirect(url_for("movie_details", movie_id=movie.id))
 
 
 @app.route("/movies/<int:movie_id>/remove", methods=["POST"])
 def remove_movie(movie_id):
-    MOVIES.pop(movie_id, None)
+    # Find the movie in MySQL
+    movie = Movie.query.get_or_404(movie_id)
+
+    # Delete it from MySQL
+    db.session.delete(movie)
+    db.session.commit()
+
     return redirect(url_for("movie_list"))
 
 @app.route("/login", methods=["GET", "POST"])
