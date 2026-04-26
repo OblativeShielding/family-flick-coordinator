@@ -6,35 +6,36 @@
     <title>Home — Movie Night Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-    <div class="page-wrapper">
+<body class="home-body">
+<div class="page-wrapper">
 
-        <div class="top-bar">
-            <h1>Movie Night Assistant</h1>
-        </div>
+    <header class="top-bar home-top-bar">
+        <h1>Movie Night Assistant</h1>
+    </header>
 
-        <div class="main-content">
-            <div class="login-section home-section">
+    <main class="home-container">
+        <section class="home-card">
 
-                <h2>Welcome{% if user %}, {{ user.username }}{% endif %}!</h2>
-                <p class="home-status">You are logged in.</p>
+            <h2>Welcome{% if user %}, {{ user.username }}{% endif %}!</h2>
+            <p class="home-status">You are logged in and ready to explore movies.</p>
 
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <ul class="home-messages">
-                    {% for message in messages %}
-                    <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                {% endwith %}
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class="home-messages">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
 
-                <div class="home-actions">
-                    <a href="{{ url_for('movie_list') }}" class="nav-link-button">Movie list</a>
-                    <a href="{{ url_for('logout') }}" class="home-logout-link">Logout</a>
-                </div>
+            <div class="home-actions">
+                <a href="{{ url_for('movie_list') }}" class="nav-link-button">View Movie List</a>
+                <a href="{{ url_for('logout') }}" class="home-logout-link">Logout</a>
             </div>
-        </div>
-    </div>
+
+        </section>
+    </main>
+</div>
 </body>
 </html>

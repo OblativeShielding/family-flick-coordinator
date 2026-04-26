@@ -1,54 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Movie Night Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-    <div class="page-wrapper">
+<body class="login-body">
 
-        <div class="top-bar">
-            <h1>Movie Night Assistant</h1>
-        </div>
+<div class="login-container">
+    <div class="login-card">
+        <h1 class="app-title">Movie Night Assistant</h1>
+        <h2>Welcome Back</h2>
+        <p class="login-subtext">Sign in to continue to your movie app</p>
 
-        <div class="main-content">
-            <div class="login-section">
+        <form method="POST" class="login-form">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
 
-                <h2>Login</h2>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                    <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                {% endwith %}
+            <button type="submit">Login</button>
+        </form>
 
-                <form method="POST" action="/login" class="login-form">
-
-                    <div class="form-row">
-                        <label>Email:</label>
-                        <input type="email" name="email" required>
-                    </div>
-
-                    <div class="form-row">
-                        <label>Password:</label>
-                        <input type="password" name="password" required>
-                    </div>
-
-                    <button type="submit">Login</button>
-
-                    <div class="register-text">
-                        Need an account? <a href="/register">Register</a>
-                    </div>
-
-                </form>
-
-            </div>
-        </div>
-
+        <p class="register-text">
+            Need an account?
+            <a href="{{ url_for('register') }}">Register</a>
+        </p>
     </div>
+</div>
 </body>
 </html>

@@ -149,57 +149,90 @@ def movie_details(movie_id):
 
 @app.route("/movies/add", methods=["POST"])
 def add_movie():
+    # Get form data from movie_list.html modal
     title = (request.form.get("title") or "").strip()
     run_time = request.form.get("run_time", type=int)
     genre = (request.form.get("genre") or "").strip()
     image_url = (request.form.get("image_url") or "").strip()
+    description = (request.form.get("description") or "").strip()
     rating = request.form.get("interest", type=int)
 
+    # Basic backup/default values so the app does not break
     if not title:
         title = "Untitled Movie"
+
     if not run_time or run_time < 1:
         run_time = 100
+
     if not genre:
         genre = "Genre"
+
     if not rating:
         rating = 1
 
+    # Create the next movie ID
     next_id = (max(MOVIES.keys()) + 1) if MOVIES else 1
+
+    # Save the new movie into the temporary MOVIES dictionary
     MOVIES[next_id] = {
         "id": next_id,
         "title": title,
         "run_time": run_time,
         "genre": genre,
-        "description": "Simple placeholder description.",
+
+        # This is the important fix:
+        # Save the description that came from the form.
+        "description": description,
+
         "interest": max(1, min(5, rating)),
         "image_url": image_url,
     }
+
     return redirect(url_for("movie_list"))
 
 
 @app.route("/movies/<int:movie_id>/edit", methods=["POST"])
 def edit_movie(movie_id):
+    # Find the movie being edited
     movie = MOVIES.get(movie_id)
+
     if movie is None:
         return "Movie not found", 404
 
+    # Get updated form data from the edit modal
     title = (request.form.get("title") or "").strip()
     run_time = request.form.get("run_time", type=int)
     genre = (request.form.get("genre") or "").strip()
     image_url = (request.form.get("image_url") or "").strip()
+    description = (request.form.get("description") or "").strip()
     rating = request.form.get("interest", type=int)
 
+    # Only update title if the user typed something
     if title:
         movie["title"] = title
+
+    # Only update runtime if it is a valid number
     if run_time and run_time > 0:
         movie["run_time"] = run_time
+
+    # Only update genre if the user typed something
     if genre:
         movie["genre"] = genre
+
+    # Image URL can be blank, so we always update it
     movie["image_url"] = image_url
+
+    # This is the important fix:
+    # Save the edited description into the movie dictionary.
+    movie["description"] = description
+
+    # Keep interest between 1 and 5 stars
     if rating:
         movie["interest"] = max(1, min(5, rating))
 
-    return redirect(url_for("movie_list"))
+    # Send user to the movie details page after editing
+    # so they can immediately see the updated description.
+    return redirect(url_for("movie_details", movie_id=movie_id))
 
 
 @app.route("/movies/<int:movie_id>/remove", methods=["POST"])

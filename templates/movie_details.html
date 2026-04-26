@@ -6,43 +6,71 @@
     <title>Movie Night Assistant - Movie Details</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-    <div class="page-wrapper">
-        <header class="top-bar">
-            <h1>Movie Night Assistant</h1>
-        </header>
+<body class="movie-page-body">
+<div class="page-wrapper">
+    <header class="top-bar movie-top-bar">
+        <h1>Movie Night Assistant</h1>
+        <div class="top-bar-right">
+            <a href="{{ url_for('movie_list') }}" class="top-nav-link">Movie List</a>
+            <a href="{{ url_for('logout') }}" class="top-bar-logout">Logout</a>
+        </div>
+    </header>
 
-        <main class="main-content movie-main">
-            <section class="movie-details-section">
-                <h2>Movie Details: {{ movie.title }}</h2>
+    <main class="main-content movie-main">
+        <section class="movie-details-section">
+            <div class="movie-details-card">
+                <div class="movie-details-header">
+                    <h2>{{ movie.title }}</h2>
+                    <p class="movie-details-subtext">Here’s a closer look at this movie.</p>
+                </div>
 
-                <div class="movie-card">
-                    {% if movie.image_url %}
-                    <img class="details-image" src="{{ movie.image_url }}" alt="{{ movie.title }} poster">
-                    {% else %}
-                    <div class="details-image movie-thumb-placeholder">No Image</div>
-                    {% endif %}
-                    <p><strong>Genre:</strong> {{ movie.genre }}</p>
-                    <p><strong>Run time:</strong> {{ movie.run_time }}m</p>
-                    <p><strong>Description:</strong> {{ movie.description }}</p>
-                    <p>
-                        <strong>Interest:</strong>
-                        <span class="stars-display">
-                            {% for star in range(1, 6) %}
-                                {% if star <= movie.interest %}&#9733;{% else %}&#9734;{% endif %}
-                            {% endfor %}
-                        </span>
-                    </p>
+                <div class="movie-details-content">
+                    <div class="movie-poster-side">
+                        {% if movie.image_url %}
+                        <img class="details-image" src="{{ movie.image_url }}" alt="{{ movie.title }} poster">
+                        {% else %}
+                        <div class="details-image movie-thumb-placeholder">No Image</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="movie-info-side">
+                        <div class="detail-row">
+                            <span class="detail-label">Genre</span>
+                            <span class="detail-value">{{ movie.genre }}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="detail-label">Run Time</span>
+                            <span class="detail-value">{{ movie.run_time }} min</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="detail-label">Interest</span>
+                            <span class="detail-value stars-display">
+                                    {% for star in range(1, 6) %}
+                                        {% if star <= movie.interest %}&#9733;{% else %}&#9734;{% endif %}
+                                    {% endfor %}
+                                </span>
+                        </div>
+
+                        <div class="detail-description">
+                            <span class="detail-label">Description</span>
+                            <p class="description-box">
+                                {{ movie.description if movie.description else "No description added yet." }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="details-actions">
                     <form action="{{ url_for('remove_movie', movie_id=movie.id) }}" method="post">
-                        <button type="submit">Remove Movie</button>
+                        <button type="submit" class="details-delete-button">Remove Movie</button>
                     </form>
-                    <a class="back-link" href="{{ url_for('movie_list') }}">Back to Movie List</a>
+                    <a class="back-link-button" href="{{ url_for('movie_list') }}">Back to Movie List</a>
                 </div>
-            </section>
-        </main>
-    </div>
+            </div>
+        </section>
+    </main>
+</div>
 </body>
 </html>
