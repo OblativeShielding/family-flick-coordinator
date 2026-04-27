@@ -97,6 +97,8 @@ def home():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        print("REGISTER FORM DATA:", request.form)
+                
         username = request.form.get("username", "").strip()
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
@@ -132,6 +134,15 @@ def register():
 
         flash("Registration successful. Please log in.")
         return redirect(url_for("login"))
+        
+        print("REGISTER FORM DATA:", request.form)
+        print("REGISTER USERNAME:", username)
+        print("REGISTER EMAIL:", email)
+        print("REGISTER PASSWORD LENGTH:", len(password))
+        
+        db.session.commit()
+        
+        print("NEW USER SAVED WITH ID:", new_user.id)
 
     return render_template("register.html")
 
@@ -242,11 +253,21 @@ def remove_movie(movie_id):
 
     return redirect(url_for("movie_list"))
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("You've been logged out.")
+    return redirect(url_for("login"))
+    
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
+
+        print("FORM DATA:", request.form)
+        print("EMAIL ENTERED:", email)
+        print("PASSWORD LENGTH:", len(password))
 
         if not email or not password:
             flash("Please enter both email and password.")
@@ -254,22 +275,27 @@ def login():
 
         user = User.query.filter_by(email=email).first()
 
-        if user and bcrypt.checkpw(password.encode("utf-8"), user.password_hash.encode("utf-8")):
-            session["user_id"] = user.id
-            session["username"] = user.username
-            flash("Login successful.")
-            return redirect(url_for("home"))
+        print("USER FOUND:", user is not None)
+
+        if user:
+            print("DATABASE EMAIL:", user.email)
+            print("HASH START:", user.password_hash[:10])
+            password_matches = bcrypt.checkpw(
+                password.encode("utf-8"),
+                user.password_hash.encode("utf-8")
+            )
+            print("PASSWORD MATCHES:", password_matches)
+
+            if password_matches:
+                session["user_id"] = user.id
+                session["username"] = user.username
+                flash("Login successful.")
+                return redirect(url_for("home"))
 
         flash("Invalid email or password.")
         return redirect(url_for("login"))
 
     return render_template("login.html")
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    flash("You've been logged out.")
-    return redirect(url_for("login"))
 
 if __name__ == "__main__":
     app.run(debug=True)
