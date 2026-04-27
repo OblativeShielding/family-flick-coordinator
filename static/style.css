@@ -305,6 +305,17 @@ body.register-body {
     font-size: 30px;
 }
 
+.movie-modal-overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 30px 20px;
+}
+
+.movie-modal-card {
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+}
+
 .top-bar-links {
     display: flex;
     gap: 12px;
@@ -339,7 +350,7 @@ body.register-body {
 }
 
 .movie-main {
-    padding: 35px 20px 50px;
+    padding: 35px 20px 80px;
 }
 
 .movie-list-section {
@@ -508,6 +519,10 @@ body.register-body {
 
 .delete-button:hover {
     background: #f7cfd4;
+}
+
+.page-wrapper {
+    min-height: 100vh;
 }
 
 /* MODAL */

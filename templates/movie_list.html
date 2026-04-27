@@ -99,8 +99,8 @@
     </main>
 </div>
 
-<div id="movie-modal" class="modal-overlay hidden">
-    <div class="modal-card">
+<div id="movie-modal" class="modal-overlay movie-modal-overlay hidden">
+    <div class="modal-card movie-modal-card">
         <h3 id="modal-title">Add Movie</h3>
 
         <form id="movie-form" action="{{ url_for('add_movie') }}" method="post" class="movie-modal-form">
